@@ -1,0 +1,128 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"creationTimestamp":null,"labels":{"app.kubernetes.io/instance":"argo-app","app.kubernetes.io/name":"app-taxi"},"name":"dev-app-taxi","namespace":"openshift-gitops"},"spec":{"destination":{"namespace":"dev","server":"https://kubernetes.default.svc"},"project":"default","source":{"path":"environments/dev/apps/app-taxi/overlays","repoURL":"https://gitlab.com/keithchong/gitops5.git"},"syncPolicy":{"automated":{"prune":true,"selfHeal":true}}},"status":{"health":{},"summary":{},"sync":{"comparedTo":{"destination":{},"source":{"repoURL":""}},"status":""}}}
+  creationTimestamp: "2021-08-06T18:22:36Z"
+  generation: 99
+  labels:
+    app.kubernetes.io/instance: argo-app
+    app.kubernetes.io/name: app-taxi
+  name: dev-app-taxi
+  namespace: openshift-gitops
+  uid: df21bcd5-8e4d-42b2-b80c-07cfbfd72317
+spec:
+  destination:
+    namespace: dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: environments/dev/apps/app-taxi/overlays
+    repoURL: https://github.com/test-repo/gitops.git?ref=HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+status:
+  health:
+    status: Healthy
+  history:
+    - deployStartedAt: "2021-08-06T18:22:59Z"
+      deployedAt: "2021-08-06T18:23:18Z"
+      id: 0
+      revision: a676b4a5beff8419b66f54bd567c6c79868e9927
+      source:
+        path: environments/dev/apps/app-taxi/overlays
+        repoURL: https://github.com/test-repo/gitops.git?ref=HEAD
+  operationState:
+    finishedAt: "2021-08-06T18:23:18Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        prune: true
+        revision: a676b4a5beff8419b66f54bd567c6c79868e9927
+    phase: Succeeded
+    startedAt: "2021-08-06T18:22:59Z"
+    syncResult:
+      resources:
+        - group: ""
+          hookPhase: Running
+          kind: Service
+          message: service/taxi created
+          name: taxi
+          namespace: dev
+          status: Synced
+          syncPhase: Sync
+          version: v1
+        - group: apps
+          hookPhase: Running
+          kind: Deployment
+          message: deployment.apps/taxi created
+          name: taxi
+          namespace: dev
+          status: Synced
+          syncPhase: Sync
+          version: v1
+        - group: route.openshift.io
+          hookPhase: Running
+          kind: Route
+          message: route.route.openshift.io/taxi created
+          name: taxi
+          namespace: dev
+          status: Synced
+          syncPhase: Sync
+          version: v1
+      revision: a676b4a5beff8419b66f54bd567c6c79868e9927
+      source:
+        path: environments/dev/apps/app-taxi/overlays
+        repoURL: https://github.com/test-repo/gitops.git?ref=HEAD
+  reconciledAt: "2021-08-06T22:36:13Z"
+  resources:
+    - health:
+        status: Healthy
+      kind: Service
+      name: taxi
+      namespace: dev
+      status: Synced
+      version: v1
+    - group: apps
+      health:
+        status: Healthy
+      kind: Deployment
+      name: taxi
+      namespace: dev
+      status: Synced
+      version: v1
+    - group: route.openshift.io
+      kind: Route
+      name: taxi
+      namespace: dev
+      status: Synced
+      version: v1
+    - group: apps
+      health:
+        status: Missing
+      kind: Secret
+      name: testsecret
+      namespace: dev
+      status: OutOfSync
+      version: v1
+  sourceType: Kustomize
+  summary:
+    images:
+      - nginxinc/nginx-unprivileged:latest
+  sync:
+    comparedTo:
+      destination:
+        namespace: dev
+        server: https://kubernetes.default.svc
+      source:
+        path: environments/dev/apps/app-taxi/overlays
+        repoURL: https://github.com/test-repo/gitops.git?ref=HEAD
+    revision: a676b4a5beff8419b66f54bd567c6c79868e9927
+    status: Synced

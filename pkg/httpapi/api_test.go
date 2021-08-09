@@ -411,6 +411,53 @@ func testArgoApplication(appCr string) (*argoV1aplha1.Application, error) {
 	return app, err
 }
 
+
+func TestGetApplicationDetails(t *testing.T) {
+	err := argoV1aplha1.AddToScheme(scheme.Scheme)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	builder := fake.NewClientBuilder()
+	kc := builder.Build()
+
+	ts, _ := makeServer(t, func(router *APIRouter) {
+		router.k8sClient = kc
+	})
+
+	var createOptions []ctrlclient.CreateOption
+	app, _ := testArgoApplication("testdata/application3.yaml")
+	err = kc.Create(context.TODO(), app, createOptions...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	url := "https://github.com/test-repo/gitops.git?ref=HEAD"
+	req := makeClientRequest(t, "Bearer testing", fmt.Sprintf("%s/v2/environments/dev/application/app-taxi?url=%s", ts.URL, url))
+	res, err := ts.Client().Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertJSONResponse(t, res, map[string]interface{}{
+		"environment": "dev",
+		"cluster":     "",
+		"deployments": []interface{}{
+			map[string]interface{}{"health": string("Healthy"), "name": string("taxi"), "status": string("Synced")},
+		},
+		"secrets": []interface{}{
+			map[string]interface{}{
+				"health": string("Missing"),
+				"name":   string("testsecret"),
+				"status": string("OutOfSync"),
+			},
+		},
+		"services": []interface{}{
+			map[string]interface{}{"health": string("Healthy"), "name": string("taxi"), "status": string("Synced")},
+		},
+	})
+}
+
+
 func newClient() *stubClient {
 	return &stubClient{files: make(map[string]string)}
 }
